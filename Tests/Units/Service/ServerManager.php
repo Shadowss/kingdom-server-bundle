@@ -27,6 +27,7 @@
 namespace Kori\KingdomServerBundle\Tests\Units\Service;
 
 use atoum\test;
+use Kori\KingdomServerBundle\Service\EffectManager;
 use Kori\KingdomServerBundle\Service\RuleManager;
 use Kori\KingdomServerBundle\Service\ServerManager as TestedModel;
 
@@ -45,6 +46,7 @@ class ServerManager extends test
         ];
         $defaultRules = [];
         $ruleManager = new RuleManager();
+        $effectManager = new EffectManager();
 
         $this
             ->given($requestStack = new \mock\Symfony\Component\HttpFoundation\RequestStack())
@@ -60,11 +62,11 @@ class ServerManager extends test
             ->and($this->calling($requestStack)->getCurrentRequest = function () use ($request) {
                 return $request;
             })
-            ->and($manager = new TestedModel($config, $defaultRules,$ruleManager))
-            ->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager))
+            ->and($manager = new TestedModel($config, $defaultRules,$ruleManager,$effectManager))
+            ->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager,$effectManager))
             ->then(
                 $this->variable($server)->isNull("Server Manager should fail to retrieve any valid server because domain is not configured.")
-            )->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager))
+            )->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager,$effectManager))
             ->then(
                 $this->object($server)->isInstanceOf("Kori\\KingdomServerBundle\\Service\\Server", "Server Manager should return a valid server.")
             )->when($server = $manager->getServer("test"))

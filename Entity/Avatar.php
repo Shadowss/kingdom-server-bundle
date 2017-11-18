@@ -95,6 +95,16 @@ class Avatar
     protected $battleLog;
 
     /**
+     * @var int
+     */
+    protected $health;
+
+    /**
+     * @var int
+     */
+    protected $maxHealth;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -283,7 +293,39 @@ class Avatar
      */
     public function isAway(): bool
     {
-        return is_null($this->getBattleLog());
+        return !is_null($this->getBattleLog());
+    }
+
+    /**
+     * @return int
+     */
+    public function getHealth(): int
+    {
+        return $this->health;
+    }
+
+    /**
+     * @param int $health
+     */
+    public function setHealth(int $health)
+    {
+        $this->health = min($health, $this->getMaxHealth());
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxHealth(): int
+    {
+        return $this->maxHealth;
+    }
+
+    /**
+     * @param int $maxHealth
+     */
+    public function setMaxHealth(int $maxHealth)
+    {
+        $this->maxHealth = $maxHealth;
     }
 
 }

@@ -24,12 +24,27 @@
  *
  */
 
-namespace Kori\KingdomServerBundle\Rules;
+namespace Kori\KingdomServerBundle\DependencyInjection\Compiler;
 
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use Kori\KingdomServerBundle\Entity\Avatar;
-
-interface EffectRuleInterface
+/**
+ * Class AddEffectRuleCompilerPass
+ * @package Kori\KingdomServerBundle\DependencyInjection\Compiler
+ */
+class AddEffectRuleCompilerPass implements CompilerPassInterface
 {
-    public function apply(Avatar &$avatar, int $type, int $value);
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        $manger = $container->getDefinition('kori_kingdom.effect_manager');
+
+        foreach ($container->findTaggedServiceIds('kori_kingdom.effect_rule') as $name => $option) {
+            if (!$manger->addMethodCall('addEffectRule', [$container->getDefinition($name)]))
+                @trigger_error("The effect rule is already registered in the system");
+        }
+    }
 }

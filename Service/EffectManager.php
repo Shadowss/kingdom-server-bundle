@@ -24,12 +24,48 @@
  *
  */
 
-namespace Kori\KingdomServerBundle\Rules;
+namespace Kori\KingdomServerBundle\Service;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Kori\KingdomServerBundle\Entity\Avatar;
+use Kori\KingdomServerBundle\Rules\EffectRuleInterface;
 
-interface EffectRuleInterface
+final class EffectManager
 {
-    public function apply(Avatar &$avatar, int $type, int $value);
+    /**
+     * @var Collection
+     */
+    protected $effectRules;
+
+    public function __construct()
+    {
+        $this->effectRules = new ArrayCollection();
+    }
+
+    /**
+     * @param EffectRuleInterface $effectRule
+     * @return bool
+     */
+    public function addEffectRule(EffectRuleInterface $effectRule): bool
+    {
+        if(!$this->effectRules->contains($effectRule)) {
+            $this->effectRules->add($effectRule);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param Avatar $avatar
+     * @param int $type
+     * @param int $value
+     */
+    public function process(Avatar $avatar, int $type, int $value)
+    {
+        $this->effectRules->filter(function (EffectRuleInterface $rule) use($avatar, $type, $value) {
+            $rule->apply($avatar, $type, $value);
+        });
+    }
 }

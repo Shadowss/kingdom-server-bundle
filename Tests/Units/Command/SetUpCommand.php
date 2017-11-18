@@ -28,6 +28,7 @@ namespace Kori\KingdomServerBundle\Tests\Units\Command;
 
 use atoum\test;
 use Kori\KingdomServerBundle\Command\SetupCommand as TestedCommand;
+use Kori\KingdomServerBundle\Service\EffectManager;
 use Kori\KingdomServerBundle\Service\GeneratorManager;
 use Kori\KingdomServerBundle\Service\RuleManager;
 use Kori\KingdomServerBundle\Service\ServerManager;
@@ -57,7 +58,7 @@ class SetUpCommand extends test
             "rate" => 1,
             "db_connection" => $entityManager,
             "days_of_protection" => 7
-        ]], [], new RuleManager());
+        ]], [], new RuleManager(), new EffectManager());
 
         $container = new \mock\Symfony\Component\DependencyInjection\ContainerInterface();
         $this->calling($container)->get = function ($v) use($generatorManager, $serverManager)  {

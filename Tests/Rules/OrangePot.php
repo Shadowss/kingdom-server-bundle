@@ -24,12 +24,19 @@
  *
  */
 
-namespace Kori\KingdomServerBundle\Rules;
+namespace Kori\KingdomServerBundle\Tests\Rules;
 
 
 use Kori\KingdomServerBundle\Entity\Avatar;
+use Kori\KingdomServerBundle\Rules\EffectRuleInterface;
 
-interface EffectRuleInterface
+class OrangePot implements EffectRuleInterface
 {
-    public function apply(Avatar &$avatar, int $type, int $value);
+    public function apply(Avatar &$avatar, int $type, int $value)
+    {
+        if($type === 0)
+        {
+            $avatar->setMaxHealth($avatar->getMaxHealth() + 100);
+        }
+    }
 }

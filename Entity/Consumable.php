@@ -27,6 +27,7 @@
 namespace Kori\KingdomServerBundle\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 /**
@@ -80,7 +81,7 @@ class Consumable
      */
     public function getEffects(): Collection
     {
-        return $this->effects;
+        return $this->effects?: $this->effects = new ArrayCollection();
     }
 
     /**
@@ -89,6 +90,15 @@ class Consumable
     public function setEffects(Collection $effects)
     {
         $this->effects = $effects;
+    }
+
+    /**
+     * @param ConsumablesEffect $effect
+     */
+    public function addEffect(ConsumablesEffect $effect)
+    {
+        if(!$this->getEffects()->contains($effect))
+            $this->getEffects()->add($effect);
     }
 
 }

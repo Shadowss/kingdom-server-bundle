@@ -52,16 +52,23 @@ final class ServerManager
     protected $ruleManager;
 
     /**
+     * @var EffectManager
+     */
+    protected $effectManager;
+
+    /**
      * ServerManager constructor.
      * @param array $config
      * @param array $defaultRules
      * @param RuleManager $ruleManager
+     * @param EffectManager $effectManager
      */
-    public function __construct(array $config, array $defaultRules, RuleManager $ruleManager)
+    public function __construct(array $config, array $defaultRules, RuleManager $ruleManager, EffectManager $effectManager)
     {
         $this->config = $config;
         $this->defaultRules = $defaultRules;
         $this->ruleManager = $ruleManager;
+        $this->effectManager = $effectManager;
     }
 
     /**
@@ -80,6 +87,7 @@ final class ServerManager
             //$server->setBuildRules($buildRules);
             //@todo add rules
             //End Add rules
+            $server->setEffectManager($this->effectManager);
 
             return $server;
         }
@@ -104,15 +112,16 @@ final class ServerManager
      * @param array $config
      * @param array $defaultRules
      * @param RuleManager $ruleManager
+     * @param EffectManager $effectManager
      * @return Server|null
      */
-    public static function matchDomain(RequestStack $requestStack, array $config, array $defaultRules, RuleManager $ruleManager): ?Server
+    public static function matchDomain(RequestStack $requestStack, array $config, array $defaultRules, RuleManager $ruleManager, EffectManager $effectManager): ?Server
     {
         foreach($config as $name => $c)
         {
             if($c["domain"] === $requestStack->getCurrentRequest()->getHost())
             {
-                $self = new self($config, $defaultRules, $ruleManager);
+                $self = new self($config, $defaultRules, $ruleManager, $effectManager);
                 return $self->getServer($name);
             }
         }

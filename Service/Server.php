@@ -29,7 +29,10 @@ namespace Kori\KingdomServerBundle\Service;
 
 use Doctrine\ORM\EntityManager;
 use Kori\KingdomServerBundle\Entity\Account;
+use Kori\KingdomServerBundle\Entity\Avatar;
 use Kori\KingdomServerBundle\Entity\BuildingLevel;
+use Kori\KingdomServerBundle\Entity\Consumable;
+use Kori\KingdomServerBundle\Entity\ConsumablesEffect;
 use Kori\KingdomServerBundle\Entity\Field;
 use Kori\KingdomServerBundle\Entity\Race;
 use Kori\KingdomServerBundle\Entity\ServerStats;
@@ -68,6 +71,11 @@ final class Server
      * @var AttackRuleInterface
      */
     protected $attackRule;
+
+    /**
+     * @var EffectManager
+     */
+    protected $effectManager;
 
     /**
      * Server constructor.
@@ -114,7 +122,6 @@ final class Server
     {
         $this->attackRule = $attackRule;
     }
-
 
     /**
      * Checks and build building
@@ -185,6 +192,35 @@ final class Server
     public function getFields(int $typeFilter = null): array
     {
         return is_null($typeFilter)? $this->em->getRepository(Field::class)->findAll() : $this->em->getRepository(Field::class)->findBy(["type" => $typeFilter]);
+    }
+
+    /**
+     * @param EffectManager $effectManager
+     * @return void
+     */
+    public function setEffectManager(EffectManager $effectManager): void
+    {
+        $this->effectManager = $effectManager;
+    }
+
+    /**
+     * @param Avatar $avatar
+     * @param Consumable $consumable
+     * @param bool $ignoreAway
+     * @return bool
+     */
+    public function consume(Avatar $avatar, Consumable $consumable, bool $ignoreAway = false): bool
+    {
+        //@todo add check if avatar is carrying/have object
+        if($avatar->isAway() && !$ignoreAway)
+            return false;
+        $consumable->getEffects()->filter(function (ConsumablesEffect $effect) use($avatar) {
+            $this->effectManager->process($avatar, $effect->getType(), $effect->getValue());
+        });
+        $this->em->persist($avatar);
+        $this->em->flush();
+
+        return true;
     }
 
 

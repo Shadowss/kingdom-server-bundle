@@ -29,6 +29,10 @@ namespace Kori\KingdomServerBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class AddBuildRuleCompilerPass
+ * @package Kori\KingdomServerBundle\DependencyInjection\Compiler
+ */
 class AddBuildRuleCompilerPass implements CompilerPassInterface
 {
 

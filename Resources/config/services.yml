@@ -6,6 +6,7 @@ services:
       $config: '%kori_kingdom.servers%'
       $defaultRules: '%kori_kingdom.default_rules%'
       $ruleManager: '@kori_kingdom.rule_manager'
+      $effectManager: '@kori_kingdom.effect_manager'
   kori_kingdom.server:
     class: Kori\KingdomServerBundle\Service\Server
     factory: 'kori_kingdom.server_manager:matchDomain'
@@ -15,9 +16,13 @@ services:
       $config: '%kori_kingdom.servers%'
       $defaultRules: '%kori_kingdom.default_rules%'
       $ruleManager: '@kori_kingdom.rule_manager'
+      $effectManager: '@kori_kingdom.effect_manager'
   kori_kingdom.generator_manager:
     class: Kori\KingdomServerBundle\Service\GeneratorManager
     public: false
   kori_kingdom.rule_manager:
     class: Kori\KingdomServerBundle\Service\RuleManager
+    public: false
+  kori_kingdom.effect_manager:
+    class: Kori\KingdomServerBundle\Service\EffectManager
     public: false
