@@ -1,0 +1,19 @@
+Kori\KingdomServerBundle\Entity\Town:
+  type: entity
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+  fields:
+    lastTick:
+      type: integer
+      options:
+        unsigned: true
+  oneToOne:
+    field:
+      targetEntity: Field
+      inversedBy: town
+      joinColumn:
+        name: field_id
+        referencedColumnName: id

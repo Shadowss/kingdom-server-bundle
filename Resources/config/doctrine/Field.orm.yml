@@ -1,0 +1,26 @@
+Kori\KingdomServerBundle\Entity\Field:
+  type: entity
+  repositoryClass: Kori\KingdomServerBundle\Repository\FieldRepository
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+  fields:
+    posX:
+      type: integer
+      column: x
+    posY:
+      type: integer
+      column: y
+  oneToOne:
+    town:
+      targetEntity: Town
+      mappedBy: field
+  manyToOne:
+    kingdom:
+      targetEntity: Kingdom
+      inversedBy: fields
+      joinColumn:
+        name: kingdom_id
+        referencedColumnName: id

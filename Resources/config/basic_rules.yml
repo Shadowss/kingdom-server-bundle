@@ -1,0 +1,5 @@
+services:
+  Kori\KingdomServerBundle\Rules\Build\:
+    resource: '../../Rules/Build/*'
+    tags:
+      - { name: kori_kingdom.build_rule }

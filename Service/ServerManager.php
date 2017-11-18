@@ -1,0 +1,122 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2017 Frisks
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+namespace Kori\KingdomServerBundle\Service;
+
+
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Class ServerManager
+ * @package Kori\KingdomServerBundle\Service
+ */
+final class ServerManager
+{
+
+    /**
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * @var array
+     */
+    protected $defaultRules;
+
+    /**
+     * @var RuleManager
+     */
+    protected $ruleManager;
+
+    /**
+     * ServerManager constructor.
+     * @param array $config
+     * @param array $defaultRules
+     * @param RuleManager $ruleManager
+     */
+    public function __construct(array $config, array $defaultRules, RuleManager $ruleManager)
+    {
+        $this->config = $config;
+        $this->defaultRules = $defaultRules;
+        $this->ruleManager = $ruleManager;
+    }
+
+    /**
+     * @param string $serverName
+     * @return Server|null
+     */
+    public function getServer(string $serverName): ?Server
+    {
+        if(array_key_exists($serverName, $this->config))
+        {
+            $config = $this->config[$serverName];
+            $server = new Server($config['db_connection'], $config['rate'], $config['days_of_protection']);
+
+            //Start Add rules
+            //$buildRules = [];
+            //$server->setBuildRules($buildRules);
+            //@todo add rules
+            //End Add rules
+
+            return $server;
+        }
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getServers(): array
+    {
+        $servers = [];
+        foreach(array_keys($this->config) as $name)
+        {
+            $servers[] = $this->getServer($name);
+        }
+        return $servers;
+    }
+
+    /**
+     * @param RequestStack $requestStack
+     * @param array $config
+     * @param array $defaultRules
+     * @param RuleManager $ruleManager
+     * @return Server|null
+     */
+    public static function matchDomain(RequestStack $requestStack, array $config, array $defaultRules, RuleManager $ruleManager): ?Server
+    {
+        foreach($config as $name => $c)
+        {
+            if($c["domain"] === $requestStack->getCurrentRequest()->getHost())
+            {
+                $self = new self($config, $defaultRules, $ruleManager);
+                return $self->getServer($name);
+            }
+        }
+        return null;
+    }
+
+}

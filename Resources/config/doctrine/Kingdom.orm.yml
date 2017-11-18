@@ -1,0 +1,18 @@
+Kori\KingdomServerBundle\Entity\Kingdom:
+  type: entity
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: AUTO
+  oneToOne:
+    king:
+      targetEntity: Account
+      inversedBy: kingdom
+      joinColumn:
+        name: king_id
+        referencedColumnName: id
+  oneToMany:
+    governors:
+      targetEntity: Account
+      mappedBy: Kingdom

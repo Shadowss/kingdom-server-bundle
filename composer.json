@@ -1,0 +1,37 @@
+{
+  "name": "kori/kingdom-server-bundle",
+  "description": "Travian Kingdom like server",
+  "license": "MIT",
+  "keywords": ["kingdom", "travian", "symfony", "bundle"],
+  "type": "symfony-bundle",
+  "authors": [
+    {
+      "name": "author's name",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "symfony/framework-bundle": "^3.0",
+    "doctrine/orm": "^2.0",
+    "symfony/security": "^3.0"
+  },
+  "require-dev": {
+    "atoum/atoum": "^3.0",
+    "symfony/expression-language": "^3.0",
+    "atoum/stubs": "^2.5"
+  },
+  "suggest": {
+    "symfony/console": "For usage of commands/cron",
+    "symfony/cache": "Uses cache to cache the kingdoms units for performance"
+  },
+  "autoload": {
+    "psr-4": { "Kori\\KingdomServerBundle\\": "" }
+  },
+  "config": {
+    "platform": {
+      "php": "7.0"
+    },
+    "bin-dir": "bin"
+  }
+}
