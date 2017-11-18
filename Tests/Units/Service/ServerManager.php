@@ -71,13 +71,24 @@ class ServerManager extends test
             ->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager,$effectManager))
             ->then(
                 $this->variable($server)->isNull("Server Manager should fail to retrieve any valid server because domain is not configured.")
-            )->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager,$effectManager))
+            )
+            ->when($server = TestedModel::matchDomain($requestStack, $config, $defaultRules,$ruleManager,$effectManager))
             ->then(
                 $this->object($server)->isInstanceOf("Kori\\KingdomServerBundle\\Service\\Server", "Server Manager should return a valid server.")
-            )->when($server = $manager->getServer("test"))
+            )
+            ->when($server = $manager->getServer("test"))
             ->then(
                 $this->object($server)->isInstanceOf("Kori\\KingdomServerBundle\\Service\\Server", "Server Manager should return a valid server.")
-            );
+            )
+            ->when($server = $manager->getServer("not_configured"))
+            ->then(
+                $this->variable($server)->isNull( "Server Manager should return null for none configured server.")
+            )
+            ->when($servers = $manager->getServers())
+            ->then(
+                $this->array($servers)->hasSize(1, "There should only be one server configured.")
+            )
+        ;
 
     }
 

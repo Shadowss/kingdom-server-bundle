@@ -28,6 +28,7 @@ namespace Kori\KingdomServerBundle\Tests\Units\Service;
 
 use atoum\test;
 use Kori\KingdomServerBundle\Entity\Avatar;
+use Kori\KingdomServerBundle\Entity\BattleLog;
 use Kori\KingdomServerBundle\Entity\Consumable;
 use Kori\KingdomServerBundle\Entity\ConsumablesEffect;
 use Kori\KingdomServerBundle\Service\EffectManager;
@@ -80,6 +81,17 @@ class Server extends test
                 $this->boolean($result)->isTrue("Consuming should succeed because avatar is not away")
                     ->and($this->integer($avatar->getHealth())->isEqualTo(100, "The red pot effect should have added 50 hp to hit initial max because it is the first effect"))
                     ->and($this->integer($avatar->getMaxHealth())->isEqualTo(200, "The orange pot effect should have added 100 max hp to produce 200 max hp"))
+            )
+            ->and($avatar->setBattleLog(new BattleLog()))
+            ->when($result = $server->consume($avatar, $item))
+            ->then(
+                $this->boolean($result)->isFalse("Consuming should fail because avatar is away")
+            )
+            ->when($result = $server->consume($avatar, $item, true))
+            ->then(
+                $this->boolean($result)->isTrue("Consuming should succeed because avatar is away but ignoring flag is set")
+                    ->and($this->integer($avatar->getHealth())->isEqualTo(150, "The red pot effect should have added 50 hp"))
+                    ->and($this->integer($avatar->getMaxHealth())->isEqualTo(300, "The orange pot effect should have added 100 max hp to produce 300 max hp"))
             )
         ;
     }
