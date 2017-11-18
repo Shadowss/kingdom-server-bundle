@@ -4,6 +4,8 @@ Bundle allows creation of kingdom like server based on Symfony 3.*.
 
 Purely a hobby project.
 
+[![Build Status](https://travis-ci.org/7thcubic/kingdom-server-bundle.svg?branch=dev)](https://travis-ci.org/7thcubic/kingdom-server-bundle)
+
 > Does not contain any client nor will i support client development
 
 
@@ -16,7 +18,7 @@ Purely a hobby project.
     - [x] Multiple server listening on different domain
     - [x] Server rules
         - [x] Build rule
-        - [ ] Attack rule
+        - [X] Attack rule
         - [x] Effect rule
     - [ ] Events
     - [ ] Chat
@@ -167,3 +169,20 @@ services:
 ```
 
 > All attack rule must implement the AttackRuleInterface
+
+#### Effect Rule
+
+Effect rule is used to process the effects of consuming an item.
+
+To register an attack rule add the tag name "kori_kingdom.effect_rule" to the service
+
+```yaml
+# Example
+services:
+  Kori\KingdomServerBundle\Rules\Effects\:
+    resource: '../../Rules/Effects/*'
+    tags:
+      - { name: kori_kingdom.effect_rule }
+```
+
+> All effect rule must implement the EffectRuleInterface
