@@ -28,8 +28,10 @@ namespace Kori\KingdomServerBundle\Service;
 
 
 use Doctrine\ORM\EntityManager;
+use Kori\KingdomServerBundle\Activity\ActivityInterface;
 use Kori\KingdomServerBundle\Entity\Account;
 use Kori\KingdomServerBundle\Entity\Avatar;
+use Kori\KingdomServerBundle\Entity\BattleLog;
 use Kori\KingdomServerBundle\Entity\BuildingLevel;
 use Kori\KingdomServerBundle\Entity\Consumable;
 use Kori\KingdomServerBundle\Entity\ConsumablesEffect;
@@ -143,9 +145,10 @@ final class Server
 
     /**
      * @param string $name
+     * @param Avatar $avatar
      * @return Account
      */
-    public function createAccount(string $name): Account
+    public function createAccount(string $name, Avatar $avatar): Account
     {
         $account = new Account();
         $account->setName($name);
@@ -166,7 +169,6 @@ final class Server
         return $this->getEntityManager()->getRepository(ServerStats::class)->findOneBy(['name' => $name]);
     }
 
-
     /**
      * @return array
      */
@@ -174,7 +176,6 @@ final class Server
     {
         return $this->em->getRepository(Race::class)->findAll();
     }
-
 
     /**
      * @param int|null $typeFilter
@@ -223,5 +224,72 @@ final class Server
         return true;
     }
 
+    /**
+     * @param Town $attacker
+     * @param Town $defender
+     * @param int $type
+     * @param array $units
+     * @param bool $sendAvatar
+     */
+    public function battle(Town $attacker, Town $defender, int $type, array $units, bool $sendAvatar = false)
+    {
+        $log = new BattleLog();
+        $log->setAttackTown($attacker);
+        $log->setDefendTown($defender);
+        $log->setType($type);
+
+        foreach ($units as $unit)
+        {
+            //@todo calculate strength
+        }
+
+        //@todo remove units from attacker
+        //@todo if sending avatar set avatar to be away
+        //$attacker->getAccount()->getAvatar()->setBattleLog($log);
+        //$this->em->persist($log);
+        //$this->em->flush();
+    }
+
+    /**
+     * Process unprocessed battles server wide
+     */
+    public function processBattles()
+    {
+        $query = $this->em->createQuery(sprintf("SELECT b from %s b where b.proccessed is FALSE and b.eta <= %d", BattleLog::class, time()));
+        foreach($query->getResult() as $result)
+        {
+            $this->attackRule->finalize($result);
+        }
+    }
+
+    /**
+     * @param Town $town
+     */
+    public function tick(Town $town)
+    {
+        $rates = $town->getGenerateRate();
+        $diff = time() - $town->getLastTick();
+        //@todo get modifiers
+        $town->setLastTick(time());
+        //$this->em->persist($town);
+        //$this->em->flush();
+
+        //@todo handle battles
+    }
+
+    /**
+     * @param ActivityInterface $activity
+     * @return bool
+     */
+    public function canTrigger(ActivityInterface $activity) : bool
+    {
+        $upTime = time() - $this->getStatus(ServerStats::CREATED_AT)->getValue();
+        if($activity->isRepeated())
+        {
+            return $upTime % $activity->getSchedule() === 0;
+        } else {
+            return $activity->getSchedule() >= $upTime;
+        }
+    }
 
 }
