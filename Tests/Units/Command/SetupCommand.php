@@ -41,7 +41,7 @@ use Kori\KingdomServerBundle\Tests\Generators\UnitGenerator;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class SetUpCommand extends test
+class SetupCommand extends test
 {
     public function testCommand()
     {
@@ -88,6 +88,8 @@ class SetUpCommand extends test
         $command->setContainer($container);
         $application = new Application();
         $application->add($command);
+
+        $command = $application->find('kingdom:setup');
 
         $commandTester = new CommandTester($command);
         $error = $commandTester->execute(array('command' => $command->getName(),
