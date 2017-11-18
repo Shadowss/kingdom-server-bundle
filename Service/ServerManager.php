@@ -83,9 +83,13 @@ final class ServerManager
             $server = new Server($config['db_connection'], $config['rate'], $config['days_of_protection']);
 
             //Start Add rules
-            //$buildRules = [];
-            //$server->setBuildRules($buildRules);
-            //@todo add rules
+            $buildRules = [];
+            $buildConfig = $config['rules']['build'] ?? $this->defaultRules['build'];
+            foreach($buildConfig as $name)
+                $buildRules[] = $this->ruleManager->getBuildRule($name);
+            $server->setBuildRules($buildRules);
+
+            $server->setAttackRule($this->ruleManager->getAttackRule($config['rules']['attack'] ?? $this->defaultRules['attack']));
             //End Add rules
             $server->setEffectManager($this->effectManager);
 

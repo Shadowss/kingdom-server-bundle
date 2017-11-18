@@ -24,32 +24,28 @@
  *
  */
 
-namespace Kori\KingdomServerBundle\DependencyInjection;
+namespace Kori\KingdomServerBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class KoriKingdomServerExtension extends Extension
+/**
+ * Class AddAttackRuleCompilerPass
+ * @package Kori\KingdomServerBundle\DependencyInjection\Compiler
+ */
+class AddAttackRuleCompilerPass implements CompilerPassInterface
 {
-    public function load(array $configs, ContainerBuilder $container)
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $manger = $container->getDefinition('kori_kingdom.rule_manager');
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
-        $loader->load('basic_rules.yml');
-
-        $defaultRules = [
-            "build" => ["basic"],
-            "attack" => "basic"
-        ];
-        $configDefaultRules = array_merge($config['default_rules'], $defaultRules);
-        $container->setParameter("kori_kingdom.default_rules", $configDefaultRules);
-
-        $container->setParameter('kori_kingdom.servers', $config['servers']);
+        foreach ($container->findTaggedServiceIds('kori_kingdom.attack_rule') as $name => $option) {
+            if (!$manger->addMethodCall('addAttackRule', [$container->getDefinition($name)]))
+                @trigger_error("The attack rule is already registered in the system");
+        }
     }
-
 }

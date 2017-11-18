@@ -141,7 +141,8 @@ class Avatar
      */
     public function setBeard(int $beard)
     {
-        $this->beard = $beard;
+        if(!$this->isFemale())
+            $this->beard = $beard;
     }
 
     /**

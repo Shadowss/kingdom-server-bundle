@@ -24,32 +24,21 @@
  *
  */
 
-namespace Kori\KingdomServerBundle\DependencyInjection;
+namespace Kori\KingdomServerBundle\Rules\Attack;
 
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class KoriKingdomServerExtension extends Extension
+use Kori\KingdomServerBundle\Entity\BattleLog;
+use Kori\KingdomServerBundle\Rules\AttackRuleInterface;
+
+/**
+ * Class Basic
+ * @package Kori\KingdomServerBundle\Rules\Attack
+ */
+class Basic implements AttackRuleInterface
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function finalize(BattleLog $battleLog)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
-        $loader->load('basic_rules.yml');
-
-        $defaultRules = [
-            "build" => ["basic"],
-            "attack" => "basic"
-        ];
-        $configDefaultRules = array_merge($config['default_rules'], $defaultRules);
-        $container->setParameter("kori_kingdom.default_rules", $configDefaultRules);
-
-        $container->setParameter('kori_kingdom.servers', $config['servers']);
+        // TODO: Implement finalize() method.
     }
 
 }

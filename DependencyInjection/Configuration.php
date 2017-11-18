@@ -43,8 +43,9 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('build')
+                        ->isRequired()
                         ->end()
-                        ->scalarNode('attack')->end()
+                        ->scalarNode('attack')->isRequired()->end()
                     ->end()
                 ->end()
             ->end();
@@ -65,6 +66,7 @@ class Configuration implements ConfigurationInterface
                                 ->defaultValue(7)
                             ->end()
                             ->arrayNode('rules')
+                                ->addDefaultsIfNotSet()
                                 ->children()
                                     ->arrayNode('build')
                                     ->end()

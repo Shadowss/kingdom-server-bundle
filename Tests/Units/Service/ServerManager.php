@@ -41,11 +41,16 @@ class ServerManager extends test
                 "domain" => "server.test.com",
                 "db_connection" => new \mock\Doctrine\ORM\EntityManager(),
                 "rate" => 1,
-                "days_of_protection" => 7
+                "days_of_protection" => 7,
+                "rules" => ["build" => ["basic"], "attack" => "basic"]
             ]
         ];
         $defaultRules = [];
+        
         $ruleManager = new RuleManager();
+        $ruleManager->addBuildRule(new \Kori\KingdomServerBundle\Rules\Build\Basic());
+        $ruleManager->addAttackRule(new \Kori\KingdomServerBundle\Rules\Attack\Basic());
+
         $effectManager = new EffectManager();
 
         $this

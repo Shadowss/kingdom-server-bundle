@@ -17,12 +17,17 @@ Purely a hobby project.
     - [x] Server rules
         - [x] Build rule
         - [ ] Attack rule
+        - [x] Effect rule
     - [ ] Events
     - [ ] Chat
     - [ ] Building
     - [ ] Attack
     - [ ] Quest
-    - [ ] Consumables
+    - [ ] Avatar
+       - [ ] Stats
+       - [x] Look
+       - [ ] Inventory
+    - [x] Consumables
     - [ ] Treasures
     - [ ] Kingdom
         - [ ] Influence

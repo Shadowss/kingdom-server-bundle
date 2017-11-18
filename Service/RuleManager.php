@@ -25,6 +25,7 @@
  */
 
 namespace Kori\KingdomServerBundle\Service;
+use Kori\KingdomServerBundle\Rules\AttackRuleInterface;
 use Kori\KingdomServerBundle\Rules\BuildRuleInterface;
 
 
@@ -43,8 +44,7 @@ final class RuleManager
     /**
      * @var array
      */
-    protected $trainRules =[];
-
+    protected $attackRules = [];
 
     /**
      * Adds a build rule to the pool
@@ -55,7 +55,6 @@ final class RuleManager
     public function addBuildRule(BuildRuleInterface $buildRule): bool
     {
         $className = get_class($buildRule);
-        //Checks if generator already exists or if there is a similar name
         if(!array_key_exists($className, $this->buildRules))
         {
             $this->buildRules[$className] = $buildRule;
@@ -70,19 +69,7 @@ final class RuleManager
      */
     public function getBuildRule(string $name): ?BuildRuleInterface
     {
-        if(array_key_exists($name,$this->buildRules))
-            return $this->buildRules[$name];
-
-        //If is a class name explode and grab the last portion
-        $pieces = explode("\\",$name);
-        $actualName = end($pieces);
-
-        foreach(array_keys($this->buildRules) as $key)
-        {
-            if(stripos($key,'\\'.$actualName) !== false)
-                return $this->buildRules[$key];
-        }
-        return null;
+        return $this->retrieveByNameFromArray($this->buildRules, $name);
     }
 
     /**
@@ -93,5 +80,59 @@ final class RuleManager
         return $this->buildRules;
     }
 
+    /**
+     * Adds a attack rule to the pool
+     *
+     * @param AttackRuleInterface $attackRule
+     * @return bool
+     */
+    public function addAttackRule(AttackRuleInterface $attackRule): bool
+    {
+        $className = get_class($attackRule);
+        if(!array_key_exists($className, $this->attackRules))
+        {
+            $this->attackRules[$className] = $attackRule;
+            return true;
+        }
+        return false;
+    }
 
+    /**
+     * @param string $name
+     * @return AttackRuleInterface|null
+     */
+    public function getAttackRule(string $name): ?AttackRuleInterface
+    {
+        return $this->retrieveByNameFromArray($this->attackRules, $name);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttackRules(): array
+    {
+        return $this->attackRules;
+    }
+
+    /**
+     * @param array $holder
+     * @param string $name
+     * @return mixed|null
+     */
+    protected function retrieveByNameFromArray(array &$holder, string $name)
+    {
+        if(array_key_exists($name,$holder))
+            return $holder[$name];
+
+        //If is a class name explode and grab the last portion
+        $pieces = explode("\\",$name);
+        $actualName = end($pieces);
+
+        foreach(array_keys($holder) as $key)
+        {
+            if(stripos($key,'\\'.$actualName) !== false)
+                return $holder[$key];
+        }
+        return null;
+    }
 }

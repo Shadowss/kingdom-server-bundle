@@ -53,12 +53,17 @@ class SetUpCommand extends test
         $generatorManager->addGenerator(new TechnologyGenerator());
         $generatorManager->addGenerator(new UnitGenerator());
 
+        $ruleManager = new RuleManager();
+        $ruleManager->addBuildRule(new \Kori\KingdomServerBundle\Rules\Build\Basic());
+        $ruleManager->addAttackRule(new \Kori\KingdomServerBundle\Rules\Attack\Basic());
+
         $entityManager = new \mock\Doctrine\ORM\EntityManager();
         $serverManager = new ServerManager(["my_server" => [
             "rate" => 1,
             "db_connection" => $entityManager,
-            "days_of_protection" => 7
-        ]], [], new RuleManager(), new EffectManager());
+            "days_of_protection" => 7,
+            "rules" => ["build" => ["basic"], "attack" => "basic"]
+        ]], [], $ruleManager, new EffectManager());
 
         $container = new \mock\Symfony\Component\DependencyInjection\ContainerInterface();
         $this->calling($container)->get = function ($v) use($generatorManager, $serverManager)  {
